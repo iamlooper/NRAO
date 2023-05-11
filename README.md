@@ -5,6 +5,7 @@ Non root android optimizer
 After downloading the zip from given sources, execute the following code in Termux but make sure that the zip is in Internal Storage / Download:
 ```
 termux-setup-storage
+sh <path to rish file> # Start Shizuku shell.
 mkdir -p /sdcard/Download/NRAO
 unzip -qo /sdcard/Download/'<filename>.zip' -d /sdcard/Download/NRAO
 sh /sdcard/Download/NRAO/run.sh
