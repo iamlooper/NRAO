@@ -30,20 +30,14 @@ setup_binaries() {
 run_nrao() {
   # Prepare binaries.
   setup_binaries "$(getprop ro.product.cpu.abi)"
-  # Delete old logs.
-  [ -f '/sdcard/Android/nrao.txt' ] && {
-    rm -f '/sdcard/Android/nrao.txt'
-    rm -f '/sdcard/Android/nrao_error.txt'
-    rm -f '/data/local/tmp/nrao_error.txt'
-  }
   # Execute NRAO.
-  /data/local/tmp/nrao '/sdcard/Android/nrao.txt' '/sdcard/Android/nrao_error.txt' &
+  /data/local/tmp/nrao 1>'/sdcard/Android/nrao.txt' 2>'/sdcard/Android/nrao_error.txt' &
   # Show a message.
   echo "[Info] NRAO is executed in background. Check Internal Storage / Android / nrao.txt for more information."
   echo "[Info] Error log (nrao_error.txt) will appear in Internal Storage / Android after NRAO is completely executed."
   # Misc.
   echo "# Execute NRAO.
-/data/local/tmp/nrao '/sdcard/Android/nrao.txt' '/sdcard/Android/nrao_error.txt' &
+/data/local/tmp/nrao 1>'/sdcard/Android/nrao.txt' 2>'/sdcard/Android/nrao_error.txt' &
 # Show a message.
 echo \"[Info] NRAO is executed in background. Check Internal Storage / Android / nrao.txt for more information.\"
 echo \"[Info] Error log (nrao_error.txt) will appear in Internal Storage / Android after NRAO is completely executed.\"" >"$HOME/../usr/bin/nrao"
