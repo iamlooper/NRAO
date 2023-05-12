@@ -1,5 +1,5 @@
-# NRAO 🚀
-Non root android optimizer
+# NRAO (Non root android optimizer) 🚀
+A non-root android optimizer, as the name tells. Powered by [Shizuku](https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api).
 
 ## Usage 🔢
 After downloading the zip from given sources, execute the following code in Termux but make sure that the zip is in Internal Storage / Download:
