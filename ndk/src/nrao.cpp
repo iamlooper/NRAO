@@ -9,10 +9,10 @@ using namespace std;
 
 // Declare functions.
 void mem_preload_tweak();
-void system_settings_tweak();
+void cmd_services_tweak();
 void main_dex_tweak();
 void secondary_dex_tweak();
-void apply_all();
+void apply_all_tweaks();
 
 // Tweak to preload important system objects into memory.
 void mem_preload_tweak() {
@@ -72,33 +72,34 @@ void mem_preload_tweak() {
   }
 
   // Print tweak completion message.  
-  xlog("date", "Preloaded important system items into RAM");  
+  xlog("date", "Preloaded important system items into RAM.");  
 }
 
-// Tweak to disable debugging, statistics & unnecessary background apps.
-void system_settings_tweak() {
-  // List of shell commands to execute.
-  vector<string> cmds = {
+// Tweak to disable debugging, statistics & unnecessary background apps etc.
+void cmd_services_tweak() {
+  // List of service commands of `cmd` to execute.
+  vector<string> svc_cmds = {
     "settings put system anr_debugging_mechanism 0",
     "settings put global fstrim_mandatory_interval 3600",
-    "cmd looper_stats disable",
-    "cmd appops set com.android.backupconfirm RUN_IN_BACKGROUND ignore",
-    "cmd appops set com.google.android.setupwizard RUN_IN_BACKGROUND ignore",
-    "cmd appops set com.android.printservice.recommendation RUN_IN_BACKGROUND ignore",
-    "cmd appops set com.android.onetimeinitializer RUN_IN_BACKGROUND ignore",
-    "cmd appops set com.qualcomm.qti.perfdump RUN_IN_BACKGROUND ignore",
-    "cmd power set-fixed-performance-mode-enabled true",
-    "am idle-maintenance"
+    "looper_stats disable",
+    "appops set com.android.backupconfirm RUN_IN_BACKGROUND ignore",
+    "appops set com.google.android.setupwizard RUN_IN_BACKGROUND ignore",
+    "appops set com.android.printservice.recommendation RUN_IN_BACKGROUND ignore",
+    "appops set com.android.onetimeinitializer RUN_IN_BACKGROUND ignore",
+    "appops set com.qualcomm.qti.perfdump RUN_IN_BACKGROUND ignore",
+    "power set-fixed-performance-mode-enabled true",
+    "activity idle-maintenance",
+    "thermalservice override-status 1"
   };
   
-  // Iterate through the list of commands.
-  for (const string& cmd : cmds) {
+  // Iterate through the list of service commands.
+  for (const string& svc_cmd : svc_cmds) {
     // Use exec_shell() function to execute shell command.
-    exec_shell(cmd, false);  
+    exec_shell("cmd " + svc_cmd, false);  
   }  
 
   // Print tweak completion message.
-  xlog("date", "Tweaked settings provider tunables");
+  xlog("date", "Tweaked `cmd` services.");
 }
 
 // Tweak to improve main DEX files.
@@ -110,7 +111,7 @@ void main_dex_tweak() {
   exec_shell(cmd, false);   
 
   // Print tweak completion message.  
-  xlog("date", "Applied main DEX tweak");  
+  xlog("date", "Applied main DEX tweak.");  
 }
 
 // Tweak to improve secondary DEX files.
@@ -129,15 +130,15 @@ void secondary_dex_tweak() {
   }
 
   // Print tweak completion message.
-  xlog("date", "Applied secondary DEX tweak");  
+  xlog("date", "Applied secondary DEX tweak.");  
 }
 
-void apply_all() {
+void apply_all_tweaks() {
   xlog("info", "Started NRAO Tweaks at " + print_date("full"));
   xlog("", "");
   
   mem_preload_tweak();
-  system_settings_tweak();
+  cmd_services_tweak();
   main_dex_tweak();  
   secondary_dex_tweak();
 
@@ -149,8 +150,8 @@ int main(int argc, char *argv[]) {
   // Write all modified data to disk.
   sync();
 
-  // Apply all.
-  apply_all();
+  // Apply all tweaks.
+  apply_all_tweaks();
   
   // Write all modified data to disk.
   sync();    
