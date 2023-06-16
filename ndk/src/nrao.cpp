@@ -17,58 +17,81 @@ void apply_all_tweaks();
 // Tweak to preload important system objects into memory.
 void mem_preload_tweak() {
   vector<string> apex_objects = {
-    "/apex/com.android.runtime/bin/linker",
-    "/apex/com.android.runtime/bin/linker64",
-    "/apex/com.android.runtime/lib/bionic/libc.so",
-    "/apex/com.android.runtime/lib/bionic/libm.so",
-    "/apex/com.android.runtime/lib/bionic/libdl.so",
-    "/apex/com.android.runtime/lib64/bionic/libc.so",
-    "/apex/com.android.runtime/lib64/bionic/libm.so",
-    "/apex/com.android.runtime/lib64/bionic/libdl.so"
+    "linker",
+    "linker64",
+    "libm.so",
+    "libdl.so"
   };
   for (const string& apex_object : apex_objects) {
-    if (is_path_exists(apex_object)) {
-      preload_item("obj", apex_object);
-    }
+    if (is_path_exists("/apex/com.android.runtime/bin/" + apex_object)) {
+      preload_item("obj", "/apex/com.android.runtime/bin/" + apex_object);
+    } 
+    if (is_path_exists("/apex/com.android.runtime/lib/bionic/" + apex_object)) {
+      preload_item("obj", "/apex/com.android.runtime/lib/bionic/" + apex_object);
+    } 
+    if (is_path_exists("/apex/com.android.runtime/lib64/bionic/" + apex_object)) {
+      preload_item("obj", "/apex/com.android.runtime/lib64/bionic/" + apex_object);
+    }         
   }
-
-  vector<string> system_objects = {
-    "/bin/linker",
-    "/bin/linker64",
-    "/system/lib/libc++.so",
-    "/system/lib/libgui.so",
-    "/system/lib/libsurfaceflinger.so",
-    "/system/lib/libandroid.so",
-    "/system/lib/libinput.so",   
-    "/system/lib64/libc++.so",
-    "/system/lib64/libgui.so",
-    "/system/lib64/libsurfaceflinger.so",
-    "/system/lib64/libandroid.so",    
-    "/system/lib64/libinput.so"
+  
+  vector<string> bin_objects = {
+    "dalvikvm",
+    "app_process"
   };
-  for (const string& system_object : system_objects) {
-    if (is_path_exists(system_object)) {
-      preload_item("obj", system_object);
-    }    
-  }
-
-  vector<string> oat_objects = {
-    "/system/framework/arm/boot-framework.oat",
-    "/system/framework/arm64/boot-framework.oat"
-  };
-  for (const string& oat_object : oat_objects) {
-    if (is_path_exists(oat_object)) {
-      preload_item("obj", oat_object);
+  for (const string& bin_object : bin_objects) {
+    if (is_path_exists("/bin/" + bin_object)) {
+      preload_item("obj", "/bin/" + bin_object);
     }    
   }  
 
-  vector<string> apks = {
+  vector<string> lib_objects = {     
+    "libandroid.so",        
+    "libandroid_runtime.so",
+    "libandroid_servers.so",    
+    "libEGL.so", 
+    "libGLESv1_CM.so",      
+    "libGLESv2.so", 
+    "libGLESv3.so",       
+    "libsurfaceflinger.so",    
+    "libhwui.so",
+    "libui.so",
+    "libskia.so",     
+    "libvulkan.so", 
+    "libRScpp.so",
+    "libinputflinger.so",  
+    "libharfbuzz_ng.so",  
+    "libprotobuf-cpp-full.so", 
+    "libprotobuf-cpp-lite.so", 
+    "libblas.so",
+    "libutils.so"    
+  };
+  for (const string& lib_object : lib_objects) {
+    if (is_path_exists("/system/lib/" + lib_object)) {
+      preload_item("obj", "/system/lib/" + lib_object);
+    } 
+    if (is_path_exists("/system/lib64/" + lib_object)) {
+      preload_item("obj", "/system/lib64/" + lib_object);    
+    } 
+  }
+
+  vector<string> framework_objects = {
+    "framework.jar",
+    "services.jar",
+    "protobuf.jar"
+  };
+  for (const string& framework_object : framework_objects) {
+    if (is_path_exists("/system/framework/" + framework_object)) {
+      preload_item("obj", "/system/framework/" + framework_object);
+    }    
+  }  
+
+  vector<string> pkg_names = {
     "com.android.systemui",
-    get_home_pkgname(),
-    get_ime_pkgname()
+    get_home_pkg_name(),
+    get_ime_pkg_name()
   };   
-  for (const string& apk : apks) {
-    preload_item("dex", apk);
+  for (const string& pkg_name : pkg_names) {
+    preload_item("app", pkg_name);
   }
 
   // Print tweak completion message.  
