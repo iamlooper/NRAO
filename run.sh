@@ -19,7 +19,8 @@ setup_binaries() {
       echo "[Error] Unsupported ABI. Exiting."
       exit 1
     } 
-    chmod -R 0777 '/data/local/tmp'
+    chmod 0755 '/data/local/tmp/nrao'
+    chmod 0755 '/data/local/tmp/vmtouch'
   } || {
     echo "[Error] Binaries not found. Exiting."
     exit 1
@@ -35,13 +36,7 @@ run_nrao() {
   # Show a message.
   echo "[Info] NRAO is executed in background. Check Internal Storage / Android / nrao.txt for more information."
   echo "[Info] Error log (nrao_error.txt) will appear in Internal Storage / Android after NRAO is completely executed."
-  # Misc.
-  echo "# Execute NRAO.
-/data/local/tmp/nrao 1>'/storage/emulated/0/Android/nrao.txt' 2>'/data/local/tmp/nrao_error.txt' && cp -f '/data/local/tmp/nrao_error.txt' '/storage/emulated/0/Android' &
-# Show a message.
-echo \"[Info] NRAO is executed in background. Check Internal Storage / Android / nrao.txt for more information.\"
-echo \"[Info] Error log (nrao_error.txt) will appear in Internal Storage / Android after NRAO is completely executed.\"" >"$HOME/../usr/bin/nrao"
-  chmod 0777 "$HOME/../usr/bin/nrao"
+  # Exit as successful.
   exit 0
 }
 
