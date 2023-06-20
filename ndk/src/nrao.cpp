@@ -22,27 +22,11 @@ void mem_preload_tweak() {
     "libm.so",
     "libdl.so"
   };
-  for (const string& apex_object : apex_objects) {
-    if (is_path_exists("/apex/com.android.runtime/bin/" + apex_object)) {
-      preload_item("obj", "/apex/com.android.runtime/bin/" + apex_object);
-    } 
-    if (is_path_exists("/apex/com.android.runtime/lib/bionic/" + apex_object)) {
-      preload_item("obj", "/apex/com.android.runtime/lib/bionic/" + apex_object);
-    } 
-    if (is_path_exists("/apex/com.android.runtime/lib64/bionic/" + apex_object)) {
-      preload_item("obj", "/apex/com.android.runtime/lib64/bionic/" + apex_object);
-    }         
-  }
-  
+
   vector<string> bin_objects = {
     "dalvikvm",
     "app_process"
   };
-  for (const string& bin_object : bin_objects) {
-    if (is_path_exists("/bin/" + bin_object)) {
-      preload_item("obj", "/bin/" + bin_object);
-    }    
-  }  
 
   vector<string> lib_objects = {     
     "libandroid.so",        
@@ -65,6 +49,37 @@ void mem_preload_tweak() {
     "libblas.so",
     "libutils.so"    
   };
+
+  vector<string> framework_objects = {
+    "framework.jar",
+    "services.jar",
+    "protobuf.jar"
+  };
+
+  vector<string> pkg_names = {
+    "com.android.systemui",
+    get_home_pkg_name(),
+    get_ime_pkg_name()
+  };   
+
+  for (const string& apex_object : apex_objects) {
+    if (is_path_exists("/apex/com.android.runtime/bin/" + apex_object)) {
+      preload_item("obj", "/apex/com.android.runtime/bin/" + apex_object);
+    } 
+    if (is_path_exists("/apex/com.android.runtime/lib/bionic/" + apex_object)) {
+      preload_item("obj", "/apex/com.android.runtime/lib/bionic/" + apex_object);
+    } 
+    if (is_path_exists("/apex/com.android.runtime/lib64/bionic/" + apex_object)) {
+      preload_item("obj", "/apex/com.android.runtime/lib64/bionic/" + apex_object);
+    }         
+  }
+
+  for (const string& bin_object : bin_objects) {
+    if (is_path_exists("/bin/" + bin_object)) {
+      preload_item("obj", "/bin/" + bin_object);
+    }    
+  }  
+
   for (const string& lib_object : lib_objects) {
     if (is_path_exists("/system/lib/" + lib_object)) {
       preload_item("obj", "/system/lib/" + lib_object);
@@ -74,33 +89,21 @@ void mem_preload_tweak() {
     } 
   }
 
-  vector<string> framework_objects = {
-    "framework.jar",
-    "services.jar",
-    "protobuf.jar"
-  };
   for (const string& framework_object : framework_objects) {
     if (is_path_exists("/system/framework/" + framework_object)) {
       preload_item("obj", "/system/framework/" + framework_object);
     }    
   }  
 
-  vector<string> pkg_names = {
-    "com.android.systemui",
-    get_home_pkg_name(),
-    get_ime_pkg_name()
-  };   
   for (const string& pkg_name : pkg_names) {
     preload_item("app", pkg_name);
   }
 
-  // Print tweak completion message.  
   xlog("date", "Preloaded important system items into RAM.");  
 }
 
 // Tweak to disable debugging, statistics & unnecessary background apps etc.
 void cmd_services_tweak() {
-  // List of service commands of `cmd` to execute.
   vector<string> svc_cmds = {
     "settings put system anr_debugging_mechanism 0",
     "settings put global fstrim_mandatory_interval 3600",
@@ -115,44 +118,32 @@ void cmd_services_tweak() {
     "thermalservice override-status 1"
   };
   
-  // Iterate through the list of service commands.
   for (const string& svc_cmd : svc_cmds) {
-    // Use exec_shell() function to execute shell command.
     exec_shell("cmd " + svc_cmd, false);  
   }  
 
-  // Print tweak completion message.
   xlog("date", "Tweaked `cmd` services.");
 }
 
 // Tweak to improve main DEX files.
 void main_dex_tweak() {
-  // Build command to execute.
   string cmd = "cmd package compile -m speed-profile -a";
-
-  // Use exec_shell() function to execute shell command.
   exec_shell(cmd, false);   
-
-  // Print tweak completion message.  
   xlog("date", "Applied main DEX tweak.");  
 }
 
 // Tweak to improve secondary DEX files.
 void secondary_dex_tweak() {
-  // List of shell commands to execute.
   vector<string> cmds = {
     "pm compile -m speed-profile --secondary-dex -a", 
     "pm reconcile-secondary-dex-files -a", 
     "pm compile --compile-layouts -a"
   };
 
-  // Iterate through the list of commands.
   for (const string& cmd : cmds) {
-    // Use exec_shell() function to execute shell command.
     exec_shell(cmd, false);  
   }
 
-  // Print tweak completion message.
   xlog("date", "Applied secondary DEX tweak.");  
 }
 
@@ -170,13 +161,8 @@ void apply_all_tweaks() {
 }
 
 int main(int argc, char *argv[]) {        
-  // Write all modified data to disk.
   sync();
-
-  // Apply all tweaks.
   apply_all_tweaks();
-  
-  // Write all modified data to disk.
   sync();    
         
   return 0;
