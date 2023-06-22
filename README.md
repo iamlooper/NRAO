@@ -17,6 +17,12 @@ You can download NRAO from the following:
 - [Pling](https://www.pling.com/p/2033220)
 - [Buy me a coffee](https://buymeacoffee.com/iamlooper/posts)
 
+## Notes 🗒️
+- Device may overheat while execution.
+- Make sure to reboot device before updating NRAO to flush previous tweaks.
+- Every device is not compatible so kindly note this before giving feedback.
+- Don't expect any black magic to occur so that your device suddenly transforms into ROG Phone 6.
+
 ## Support Us 💙
 If you liked any one of my projects then consider supporting me via following:
 - [Buy me a coffee](https://buymeacoffee.com/iamlooper)

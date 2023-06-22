@@ -98,13 +98,13 @@ void mem_preload_tweak() {
   xlog("date", "Preloaded important system items into RAM.");  
 }
 
-// Tweak to disable debugging, statistics & unnecessary background apps etc.
+// Tweak to disable debugging, statistics, unnecessary background apps, phantom process killer, lock profiling (analysis tool), make changes to `DeviceConfig` flags persistent, enable IORAP readahead feature, improve FSTrim time interval and tweak `ActivityManager`.
 void cmd_services_tweak() {
   // List of service commands of `cmd` to execute.
   vector<string> svc_cmds = {
     "settings put system anr_debugging_mechanism 0",
-    "settings put global fstrim_mandatory_interval 3600",
     "looper_stats disable",
+    "settings put global netstats_enabled 0",  
     "appops set com.android.backupconfirm RUN_IN_BACKGROUND ignore",
     "appops set com.google.android.setupwizard RUN_IN_BACKGROUND ignore",
     "appops set com.android.printservice.recommendation RUN_IN_BACKGROUND ignore",
@@ -112,7 +112,15 @@ void cmd_services_tweak() {
     "appops set com.qualcomm.qti.perfdump RUN_IN_BACKGROUND ignore",
     "power set-fixed-performance-mode-enabled true",
     "activity idle-maintenance",
-    "thermalservice override-status 1"
+    "thermalservice override-status 1",
+    "settings put global settings_enable_monitor_phantom_procs false",
+    "device_config put runtime_native_boot disable_lock_profiling true",
+    "device_config set_sync_disabled_for_tests persistent",
+    "device_config put runtime_native_boot iorap_readahead_enable true",
+    "settings put global fstrim_mandatory_interval 3600",
+    "device_config put activity_manager max_phantom_processes 2147483647",
+    "device_config put activity_manager max_cached_processes 256",
+    "device_config put activity_manager max_empty_time_millis 43200000"
   };
   
   // Iterate through the list of service commands.
@@ -141,7 +149,7 @@ void main_dex_tweak() {
 void secondary_dex_tweak() {
   // List of shell commands to execute.
   vector<string> cmds = {
-    "pm compile -m speed-profile --secondary-dex -a", 
+    "for i in $(pm list packages | cut -d: -f2); do pm compile -m speed-profile --secondary-dex $i; done", 
     "pm reconcile-secondary-dex-files -a", 
     "pm compile --compile-layouts -a"
   };
